@@ -17,7 +17,7 @@ public class Order {
     private Long id;
 
     @Column(name = "totalPrice", nullable = false)
-    private BigDecimal totalPrice;
+    private double totalPrice;
 
     @ManyToOne
     private User user;

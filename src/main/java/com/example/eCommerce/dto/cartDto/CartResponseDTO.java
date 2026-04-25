@@ -10,5 +10,5 @@ import java.util.List;
 public class CartResponseDTO {
 private  Long id;
 private List<CartItemResponseDTO> cartItemResponseDTOList;
-private BigDecimal totalPrice;
+private double totalPrice;
 }

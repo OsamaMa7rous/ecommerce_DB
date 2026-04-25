@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 public class ProductResponseDTO {
     private Long id;
     private String name;
-    private BigDecimal price;
+    private double price;
     private String description;
     private int stock;
 }

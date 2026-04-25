@@ -10,6 +10,6 @@ import java.util.List;
 public class OrderResponseDTO {
     private Long Id;
     private List<OrderItemResponseDTO> orderItemResponseDTOList;
-    private BigDecimal orderTotalPrice;
+    private double orderTotalPrice;
     private String userEmail;
 }
