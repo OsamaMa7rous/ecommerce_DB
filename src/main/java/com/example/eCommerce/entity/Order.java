@@ -12,13 +12,15 @@ import java.math.BigDecimal;
 @Table(name = "order")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+
+    @Column(name = "totalPrice", nullable = false)
+    private BigDecimal totalPrice;
 
     @ManyToOne
     private User user;
 
-    private BigDecimal totalPrice;
 
 }

@@ -12,7 +12,7 @@ import java.util.List;
 @Table(name = "user")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false,unique = true)
     private Long id;
 
@@ -24,6 +24,9 @@ public class User {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "role", nullable = false)
+    private String role;
 
     @OneToOne(mappedBy = "user")
     private Cart cart;

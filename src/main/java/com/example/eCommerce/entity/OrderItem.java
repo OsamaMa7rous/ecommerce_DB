@@ -10,7 +10,7 @@ import lombok.Setter;
 @Table(name = "order_item_1")
 public class OrderItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -20,6 +20,8 @@ public class OrderItem {
     @ManyToOne
     private Product product;
 
+    @Column(name = "quantity", nullable = false)
     private int quantity;
-    private double price;
+
+
 }
