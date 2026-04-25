@@ -16,6 +16,9 @@ public class Category {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "category_name", nullable = false)
+    private String name;
+
     @OneToMany
     private List<Product> product;
 
