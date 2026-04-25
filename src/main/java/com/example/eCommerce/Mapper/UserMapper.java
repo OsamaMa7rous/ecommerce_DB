@@ -13,6 +13,8 @@ import java.util.List;
 @Component
 public class UserMapper {
     public User toEntity(UserRequestDTO userDto) {
+        if(userDto == null)return null;
+
         User user = new User();
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
@@ -23,6 +25,8 @@ public class UserMapper {
 
 
     public UserResponseDTO toDto(User user) {
+        if(user == null)return null;
+
         UserResponseDTO newUser = new UserResponseDTO();
         newUser.setEmail(user.getEmail());
         newUser.setName(user.getName());

@@ -11,6 +11,8 @@ import java.util.List;
 public class ProductMapper {
 
     public static Product toEntity(ProductRequestDTO dto) {
+        if(dto == null)return null;
+
         Product product = new Product();
         product.setDescription(dto.getDescription());
         product.setName(dto.getName());
@@ -21,6 +23,8 @@ public class ProductMapper {
 
 
     public static ProductResponseDTO toDto(Product product) {
+        if(product == null)return null;
+
         ProductResponseDTO newProduct = new ProductResponseDTO();
         newProduct.setDescription(product.getDescription());
         newProduct.setName(product.getName());
@@ -30,7 +34,9 @@ public class ProductMapper {
     }
 //ssssssssssssss
     public static List<ProductResponseDTO> toDtoList(List<Product> products) {
-       return products.stream().map(ProductMapper::toDto).toList();
+        if(products == null)return null;
+
+        return products.stream().map(ProductMapper::toDto).toList();
 
     }
 
