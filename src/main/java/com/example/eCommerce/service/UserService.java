@@ -6,7 +6,6 @@ import com.example.eCommerce.dto.userDto.UserResponseDTO;
 import com.example.eCommerce.entity.User;
 import com.example.eCommerce.repository.UserRepo;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,8 +20,7 @@ import java.util.List;
       private final UserRepo repository;
 
 
-   */
-public class UserService {
+   */ public class UserService {
 
     @Autowired
     private UserRepo repository;
@@ -57,8 +55,8 @@ public class UserService {
     }
 
     public UserResponseDTO findByEmail(String email) {
-        UserResponseDTO user =repository.findByEmail(email);
-        if(user == null) {
+        UserResponseDTO user = repository.findByEmail(email);
+        if (user == null) {
             throw new RuntimeException("User Not Found in Service");
         }
         return user;
