@@ -9,7 +9,7 @@ import lombok.Data;
 public class UserRequestDTO {
 
     @NotBlank
-    @Size(min = 1, max = 30)
+    @Size(min = 2, max = 30)
     private String name;
 
     @Email

@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Data
-@RestController("/auth")
+@RestController
+@RequestMapping("/auth")
 public class UserController {
     private UserService userService;
 
