@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Data
-@RestController("/api/auth")
+@RestController("/auth")
 public class UserController {
     private UserService userService;
 
@@ -20,7 +20,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/api/auth/users")
+    @PostMapping("/auth/register")
     public ResponseEntity<UserResponseDTO> register(@RequestBody UserRequestDTO userRequestDTO) {
         UserResponseDTO user = userService.register(userRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
