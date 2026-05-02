@@ -5,6 +5,7 @@ import com.example.eCommerce.dto.productDto.ProductResponseDTO;
 import com.example.eCommerce.dto.userDto.UserRequestDTO;
 import com.example.eCommerce.dto.userDto.UserResponseDTO;
 import com.example.eCommerce.entity.Product;
+import com.example.eCommerce.entity.Role;
 import com.example.eCommerce.entity.User;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,7 @@ public class UserMapper {
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
         user.setPassword(userDto.getPassword());
-        user.setRole("USER");
+        user.setRole(Role.USER);
         return user;
     }
 

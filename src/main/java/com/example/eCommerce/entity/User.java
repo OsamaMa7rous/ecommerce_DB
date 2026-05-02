@@ -26,7 +26,8 @@ public class User {
     private String password;
 
     @Column(name = "role", nullable = false)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @OneToOne(mappedBy = "user")
     private Cart cart;
