@@ -1,5 +1,7 @@
 package com.example.eCommerce.controller;
 
+import com.example.eCommerce.dto.userDto.LoginRequestDTO;
+import com.example.eCommerce.dto.userDto.LoginResponseDTO;
 import com.example.eCommerce.dto.userDto.UserRequestDTO;
 import com.example.eCommerce.dto.userDto.UserResponseDTO;
 import com.example.eCommerce.service.UserService;
@@ -20,6 +22,12 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> register(@RequestBody UserRequestDTO userRequestDTO) {
         UserResponseDTO user = userService.register(userRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
+
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO dto) {
+        return ResponseEntity.ok(userService.login(dto));
 
     }
 

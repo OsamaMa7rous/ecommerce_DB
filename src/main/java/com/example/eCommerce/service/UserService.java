@@ -1,12 +1,12 @@
 package com.example.eCommerce.service;
 
 import com.example.eCommerce.Mapper.UserMapper;
+import com.example.eCommerce.dto.userDto.LoginRequestDTO;
+import com.example.eCommerce.dto.userDto.LoginResponseDTO;
 import com.example.eCommerce.dto.userDto.UserRequestDTO;
 import com.example.eCommerce.dto.userDto.UserResponseDTO;
 import com.example.eCommerce.entity.User;
 import com.example.eCommerce.repository.UserRepo;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,18 +39,25 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("Email already exists in Service");
         }
         User user = userMapper.toEntity(userRequestDTO);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
         repository.save(user);
         return userMapper.toDto(user);
     }
 
+    public LoginResponseDTO login(LoginRequestDTO dto) {
+        User user = repository.findByEmail(dto.getEmail()).orElseThrow(() -> new RuntimeException("Invalid Email or Password when getting the user by email"));
+        System.out.println(user.toString());
+
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid Email or Password when comparing passwords");
+        }
+        return new LoginResponseDTO(user.getId(), user.getEmail(), "Login successful");
+    }
+
     public UserResponseDTO getUserById(Long id) {
-        User user = repository.getReferenceById(id);
-        if(user!=null) {
+        User user = repository.findById(id).orElseThrow(() -> new RuntimeException("User not found with id " + id));
             return userMapper.toDto(user);
 
-        }
-        else throw new RuntimeException("User not found");
     }
 
     public List<UserResponseDTO> getAllUsers() {
@@ -68,16 +75,8 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) {
         User user = findByEmail(email);
-        if (user != null) {
-            return new org.springframework.security.core.userdetails.User(
-                    user.getEmail(),
-                    user.getPassword(),
-                    List.of(new SimpleGrantedAuthority("ROLE_"+user.getRole()))
-                    );
+            return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole())));
 
-        } else {
-            throw new RuntimeException("User not Found");
-        }
 
 
     }
