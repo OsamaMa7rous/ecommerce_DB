@@ -56,7 +56,7 @@ public class UserService implements UserDetailsService {
 
     public UserResponseDTO getUserById(Long id) {
         User user = repository.findById(id).orElseThrow(() -> new RuntimeException("User not found with id " + id));
-            return userMapper.toDto(user);
+        return userMapper.toDto(user);
 
     }
 
@@ -75,8 +75,8 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) {
         User user = findByEmail(email);
-            return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole())));
-
+        return new org.springframework.security.core.userdetails.User
+                (user.getEmail(), user.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole())));
 
 
     }
