@@ -4,6 +4,7 @@ import com.example.eCommerce.dto.userDto.LoginRequestDTO;
 import com.example.eCommerce.dto.userDto.LoginResponseDTO;
 import com.example.eCommerce.dto.userDto.UserRequestDTO;
 import com.example.eCommerce.dto.userDto.UserResponseDTO;
+import com.example.eCommerce.service.AuthService;
 import com.example.eCommerce.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,8 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private AuthService authService;
 
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> register(@RequestBody UserRequestDTO userRequestDTO) {
@@ -28,17 +31,17 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO dto) {
-        return ResponseEntity.ok(userService.login(dto));
+        return ResponseEntity.ok(authService.login(dto));
 
     }
 
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users/{id}")
     public ResponseEntity<UserResponseDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
     public ResponseEntity<List<UserResponseDTO>> getAll() {
         return ResponseEntity.ok(userService.getAllUsers());
