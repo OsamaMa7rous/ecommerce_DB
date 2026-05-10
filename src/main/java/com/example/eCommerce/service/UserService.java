@@ -30,20 +30,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepo repository;
-    private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
-
-    public UserResponseDTO register(UserRequestDTO userRequestDTO) {
-        if (repository.existsByEmail(userRequestDTO.getEmail())) {
-            throw new RuntimeException("Email already exists in Service");
-        }
-        User user = userMapper.toEntity(userRequestDTO);
-        user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
-        repository.save(user);
-        return userMapper.toDto(user);
-    }
-
-
 
     public UserResponseDTO getUserById(Long id) {
         User user = repository.findById(id).orElseThrow(() -> new RuntimeException("User not found with id " + id));
