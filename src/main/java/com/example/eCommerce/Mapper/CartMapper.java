@@ -4,12 +4,16 @@ import com.example.eCommerce.dto.cartDto.CartResponseDTO;
 import com.example.eCommerce.dto.cartItemDto.CartItemRequestDTO;
 import com.example.eCommerce.dto.cartItemDto.CartItemResponseDTO;
 import com.example.eCommerce.entity.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class CartMapper {
+
+    private final ProductMapper productMapper;
 
     public CartItemResponseDTO toCartItemDto(CartItem cartItems) {
         if (cartItems == null) return null;
@@ -17,7 +21,7 @@ public class CartMapper {
         CartItemResponseDTO dto = new CartItemResponseDTO();
         dto.setId(cartItems.getId());
         dto.setQuantity(cartItems.getQuantity());
-        dto.setProduct(ProductMapper.toDto(cartItems.getProduct()));
+        dto.setProduct(productMapper.toDto(cartItems.getProduct()));
         return dto;
 
     }
