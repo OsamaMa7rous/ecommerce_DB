@@ -7,6 +7,7 @@ import com.example.eCommerce.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -51,13 +52,19 @@ public class CartMapper {
     }
 
 
-    public CartResponseDTO toCartDto(Cart cart, List<CartItem> cartItems) {
-        if (cartItems == null) return null;
-
+    public CartResponseDTO toCartDto(Cart cart) {
         CartResponseDTO dto = new CartResponseDTO();
+        List<CartItem> cartItems = cart.getCartItems();
+
         dto.setId(cart.getId());
+        dto.setUserID(cart.getUser().getId());
+        dto.setUsername(cart.getUser().getName());
         dto.setCartItemResponseDTOList(toCartItemDtoList(cartItems));
-        double totalPrice = cartItems.stream().mapToDouble(e -> e.getProduct().getPrice() * e.getQuantity()).sum();
+
+
+        double totalPrice = cartItems.stream()
+                .mapToDouble(e -> e.getProduct().getPrice() * e.getQuantity()).sum();
+
         dto.setTotalPrice(totalPrice);
         return dto;
     }
