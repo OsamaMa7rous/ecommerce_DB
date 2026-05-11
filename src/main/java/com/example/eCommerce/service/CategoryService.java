@@ -23,9 +23,8 @@ public class CategoryService {
 
     public CategoryResponseDTO updateCategory(Long id, Category category) {
         Category update = repository.findById(id).orElseThrow(()
-                -> new IllegalArgumentException("category is null"));
+                -> new RuntimeException("category is null"));
         update.setName(category.getName());
-        update.setId(category.getId());
         Category updated = repository.save(update);
         return mapper.toDto(updated);
 
@@ -33,7 +32,7 @@ public class CategoryService {
 
     public String deleteCategory(Long id) {
         Category category = repository.findById(id).orElseThrow(()
-                -> new IllegalArgumentException("category is null"));
+                -> new RuntimeException("category is null"));
         repository.delete(category);
         return "Category Deleted successfully";
 
@@ -41,7 +40,7 @@ public class CategoryService {
 
     public CategoryResponseDTO getOneCategory(Long id) {
         Category category = repository.findById(id).orElseThrow(()
-                -> new IllegalArgumentException("category is null"));
+                -> new RuntimeException("category is null"));
         return mapper.toDto(category);
     }
 
