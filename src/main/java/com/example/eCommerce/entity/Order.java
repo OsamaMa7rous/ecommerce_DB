@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,7 +21,12 @@ public class Order {
     private double totalPrice;
 
     @ManyToOne
+    @JoinColumn(name = "userId")
     private User user;
+
+    @OneToMany
+    @JoinColumn(name = "orderItemsId")
+    private List<OrderItem> orderItem;
 
 
 }
