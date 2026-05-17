@@ -23,8 +23,18 @@ public class OrderItemService {
 
 
     public OrderItemResponseDTO createOrderItem(OrderItem item) {
+
         Product product = productRepo.findById(item.getProduct().getId()).orElseThrow(() -> new RuntimeException("Product not found"));
         Order order = orderRepo.findById(item.getOrder().getId()).orElseThrow(() -> new RuntimeException("Order not found"));
+        if (product.getStock() < item.getQuantity()) {
+            throw new RuntimeException(
+                    "Not enough stock for product: " + product.getName()
+            );
+
+        }
+        product.setStock(product.getStock() - item.getQuantity());
+        productRepo.save(product);
+
         item.setOrder(order);
         item.setProduct(product);
         item.setPrice(product.getPrice());
@@ -35,7 +45,7 @@ public class OrderItemService {
 
     public OrderItemResponseDTO updateOrderItem(Long id, OrderItem order) {
         OrderItem oldOrderItem = orderItemRepo.findById(id).orElseThrow(() -> new RuntimeException("OrderItem not found"));
-       Product product  = productRepo.findById(order.getProduct().getId()).orElseThrow(() -> new RuntimeException("Product not found"));
+        Product product = productRepo.findById(order.getProduct().getId()).orElseThrow(() -> new RuntimeException("Product not found"));
 
         oldOrderItem.setQuantity(order.getQuantity());
         oldOrderItem.setPrice(product.getPrice());
@@ -47,6 +57,9 @@ public class OrderItemService {
 
     public String deleteOrderItem(Long id) {
         OrderItem orderItem = orderItemRepo.findById(id).orElseThrow(() -> new RuntimeException("OrderItem not found"));
+        Product product = orderItem.getProduct();
+        product.setStock(orderItem.getQuantity()+product.getStock());
+        productRepo.save(product);
         Order order = orderItem.getOrder();
         orderItemRepo.delete(orderItem);
         updateTotalPrice(order);
@@ -65,7 +78,7 @@ public class OrderItemService {
     }
 
     private void updateTotalPrice(Order order) {
-        double price = order.getOrderItem().stream().mapToDouble(item ->item.getPrice()*item.getQuantity()).sum();
+        double price = order.getOrderItem().stream().mapToDouble(item -> item.getPrice() * item.getQuantity()).sum();
         order.setTotalPrice(price);
         orderRepo.save(order);
 

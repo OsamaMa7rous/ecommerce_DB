@@ -31,6 +31,12 @@ public class OrderService {
 
         for (OrderItem item : order.getOrderItem()) {
             Product product = productRepo.findById(item.getProduct().getId()).orElseThrow(() -> new RuntimeException("Product not found"));
+            if (product.getStock() < item.getQuantity()) {
+                throw new RuntimeException(
+                        "Not enough stock for product: " + product.getName()
+                );
+            }
+            product.setStock(product.getStock() - item.getQuantity());
             item.setProduct(product);
             item.setPrice(product.getPrice());
             item.setOrder(order);
@@ -67,6 +73,11 @@ public class OrderService {
 
     public String deleteOrder(Long id) {
         Order save = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("order not found"));
+        for (OrderItem item : save.getOrderItem()) {
+            Product product = item.getProduct();
+            product.setStock(product.getStock() + item.getQuantity());
+            productRepo.save(product);
+        }
         orderRepo.delete(save);
 
         return "Order Deleted successfully";
