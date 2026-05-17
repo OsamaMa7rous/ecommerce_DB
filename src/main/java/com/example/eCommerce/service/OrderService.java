@@ -30,11 +30,11 @@ public class OrderService {
         double total = 0.0;
 
         for (OrderItem item : order.getOrderItem()) {
-            Product product = productRepo.findById(item.getProduct().getId()).orElseThrow(() -> new RuntimeException("order item not found"));
+            Product product = productRepo.findById(item.getProduct().getId()).orElseThrow(() -> new RuntimeException("Product not found"));
             item.setProduct(product);
             item.setPrice(product.getPrice());
             item.setOrder(order);
-            total += item.getPrice() * item.getQuantity();
+            total += product.getPrice() * item.getQuantity();
 
         }
         order.setTotalPrice(total);

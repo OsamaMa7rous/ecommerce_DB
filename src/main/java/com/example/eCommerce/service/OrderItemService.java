@@ -2,8 +2,12 @@ package com.example.eCommerce.service;
 
 import com.example.eCommerce.Mapper.OrderMapper;
 import com.example.eCommerce.dto.orderItemDto.OrderItemResponseDTO;
+import com.example.eCommerce.entity.Order;
 import com.example.eCommerce.entity.OrderItem;
+import com.example.eCommerce.entity.Product;
 import com.example.eCommerce.repository.OrderItemRepo;
+import com.example.eCommerce.repository.OrderRepo;
+import com.example.eCommerce.repository.ProductRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,25 +17,39 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderItemService {
     private final OrderItemRepo orderItemRepo;
+    private final ProductRepo productRepo;
+    private final OrderRepo orderRepo;
     private final OrderMapper orderMapper;
 
 
     public OrderItemResponseDTO createOrderItem(OrderItem item) {
+        Product product = productRepo.findById(item.getProduct().getId()).orElseThrow(() -> new RuntimeException("Product not found"));
+        Order order = orderRepo.findById(item.getOrder().getId()).orElseThrow(() -> new RuntimeException("Order not found"));
+        item.setOrder(order);
+        item.setProduct(product);
+        item.setPrice(product.getPrice());
         OrderItem save = orderItemRepo.save(item);
+        updateTotalPrice(order);
         return orderMapper.orderItemToDto(save);
     }
 
     public OrderItemResponseDTO updateOrderItem(Long id, OrderItem order) {
         OrderItem oldOrderItem = orderItemRepo.findById(id).orElseThrow(() -> new RuntimeException("OrderItem not found"));
+       Product product  = productRepo.findById(order.getProduct().getId()).orElseThrow(() -> new RuntimeException("Product not found"));
+
         oldOrderItem.setQuantity(order.getQuantity());
-        oldOrderItem.setPrice(order.getPrice());
-        oldOrderItem.setProduct(order.getProduct());
-        orderItemRepo.save(oldOrderItem);
-        return orderMapper.orderItemToDto(oldOrderItem);
+        oldOrderItem.setPrice(product.getPrice());
+        oldOrderItem.setProduct(product);
+        OrderItem save = orderItemRepo.save(oldOrderItem);
+        updateTotalPrice(save.getOrder());
+        return orderMapper.orderItemToDto(save);
     }
 
     public String deleteOrderItem(Long id) {
-        orderItemRepo.deleteById(id);
+        OrderItem orderItem = orderItemRepo.findById(id).orElseThrow(() -> new RuntimeException("OrderItem not found"));
+        Order order = orderItem.getOrder();
+        orderItemRepo.delete(orderItem);
+        updateTotalPrice(order);
         return "OrderItem Deleted successfully";
 
     }
@@ -44,6 +62,13 @@ public class OrderItemService {
     public List<OrderItemResponseDTO> getOrderItems() {
         List<OrderItem> all = orderItemRepo.findAll();
         return orderMapper.orderItemToDtoList(all);
+    }
+
+    private void updateTotalPrice(Order order) {
+        double price = order.getOrderItem().stream().mapToDouble(item ->item.getPrice()*item.getQuantity()).sum();
+        order.setTotalPrice(price);
+        orderRepo.save(order);
+
     }
 
 }
