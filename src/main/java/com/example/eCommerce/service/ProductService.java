@@ -3,12 +3,15 @@ package com.example.eCommerce.service;
 import com.example.eCommerce.Mapper.ProductMapper;
 import com.example.eCommerce.dto.productDto.ProductRequestDTO;
 import com.example.eCommerce.dto.productDto.ProductResponseDTO;
+import com.example.eCommerce.entity.Category;
 import com.example.eCommerce.entity.Product;
+import com.example.eCommerce.repository.CategoryRepo;
 import com.example.eCommerce.repository.ProductRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,9 +19,12 @@ public class ProductService {
 
     private final ProductRepo productRepo;
     private final ProductMapper productMapper;
+    private final CategoryRepo categoryRepo;
 
     public ProductResponseDTO addProduct(ProductRequestDTO productRequestDTO) {
+        Category category = categoryRepo.findById(productRequestDTO.getCategoryId()).get();
         Product product = ProductMapper.toEntity(productRequestDTO);
+        product.setCategory(category);
         Product save = productRepo.save(product);
         return productMapper.toDto(save);
 
