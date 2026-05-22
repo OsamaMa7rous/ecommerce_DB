@@ -22,6 +22,10 @@ public class OrderItem {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    @ManyToOne
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
+
     @Column(name = "quantity", nullable = false)
     private int quantity;
     @Column(name = "price", nullable = false)

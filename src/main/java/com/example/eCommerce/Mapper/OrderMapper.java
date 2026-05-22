@@ -20,7 +20,8 @@ public class OrderMapper {
         dto.setOrderId(orderItem.getOrder() != null ? orderItem.getOrder().getId() : null);
         dto.setProductId(orderItem.getProduct() != null ? orderItem.getProduct().getId() : null);
         dto.setProductName(orderItem.getProduct() != null ? orderItem.getProduct().getName() : null);
-        dto.setOrderItemId(orderItem.getId());
+        dto.setCartId(orderItem.getCart() != null ? orderItem.getCart().getId() : null);
+        dto.setId(orderItem.getId());
         dto.setPrice(orderItem.getPrice());
         dto.setQuantity(orderItem.getQuantity());
         return dto;
@@ -37,7 +38,7 @@ public class OrderMapper {
 
         orderItem.getProduct().setId(dto.getProductId());
         orderItem.getProduct().setName(dto.getProductName());
-        orderItem.setPrice(dto.getPrice());
+       orderItem.setPrice(dto.getPrice());
         orderItem.getOrder().setId(dto.getOrderId());
         orderItem.setQuantity(dto.getQuantity());
         return orderItem;

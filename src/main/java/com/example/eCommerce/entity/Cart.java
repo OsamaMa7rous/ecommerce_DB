@@ -20,6 +20,9 @@ public class Cart {
     @JoinColumn(name = "user_Id")
     private User user;
 
+    @OneToMany(mappedBy ="cart")
+    private List<OrderItem> orderItem;
+
     //orphanRemoval لم امسحه من الليست يتمسح تلقائى من اى مكان اخر هو موجود فيه
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<CartItem> cartItems;

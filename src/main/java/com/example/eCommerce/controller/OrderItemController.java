@@ -1,5 +1,6 @@
 package com.example.eCommerce.controller;
 
+import com.example.eCommerce.dto.orderItemDto.OrderItemRequestDto;
 import com.example.eCommerce.dto.orderItemDto.OrderItemResponseDTO;
 import com.example.eCommerce.entity.OrderItem;
 import com.example.eCommerce.service.OrderItemService;
@@ -19,7 +20,7 @@ public class OrderItemController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public OrderItemResponseDTO createOrderItem(@RequestBody OrderItem item) {
+    public OrderItemResponseDTO createOrderItem(@RequestBody OrderItemRequestDto item) {
         return orderItemService.createOrderItem(item);
 
     }

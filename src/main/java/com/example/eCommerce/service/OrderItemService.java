@@ -1,10 +1,13 @@
 package com.example.eCommerce.service;
 
 import com.example.eCommerce.Mapper.OrderMapper;
+import com.example.eCommerce.dto.orderItemDto.OrderItemRequestDto;
 import com.example.eCommerce.dto.orderItemDto.OrderItemResponseDTO;
+import com.example.eCommerce.entity.Cart;
 import com.example.eCommerce.entity.Order;
 import com.example.eCommerce.entity.OrderItem;
 import com.example.eCommerce.entity.Product;
+import com.example.eCommerce.repository.CartRepo;
 import com.example.eCommerce.repository.OrderItemRepo;
 import com.example.eCommerce.repository.OrderRepo;
 import com.example.eCommerce.repository.ProductRepo;
@@ -20,63 +23,94 @@ public class OrderItemService {
     private final OrderItemRepo orderItemRepo;
     private final ProductRepo productRepo;
     private final OrderRepo orderRepo;
+    private final CartRepo cartRepo;
     private final OrderMapper orderMapper;
 
 
-    public OrderItemResponseDTO createOrderItem(OrderItem item) {
-        Product product = productRepo.findById(item.getProduct().getId()).orElseThrow(() -> new RuntimeException("Product not found"));
-        Order order = orderRepo.findById(item.getOrder().getId()).orElseThrow(() -> new RuntimeException("Order not found"));
+    public OrderItemResponseDTO createOrderItem(OrderItemRequestDto dto) {
 
-        if (product.getStock() < item.getQuantity()) {
-            throw new RuntimeException(
-                    "Not enough stock for product: " + product.getName()
-            );
-        }
+        Product product = productRepo.findById(dto.getProductId())
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        Optional<OrderItem> existingItem = orderItemRepo.findByOrderIdAndProductId(item.getOrder().getId(), item.getProduct().getId());
-        OrderItem save;
-        if (existingItem.isPresent()) {
-            OrderItem oldItem = existingItem.get();
-            int newQuantity = oldItem.getQuantity() + item.getQuantity();
-            if(product.getStock() < newQuantity) {
+        Order order = orderRepo.findById(dto.getOrderId())
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        Cart cart = cartRepo.findById(dto.getCartId())
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+
+        Optional<OrderItem> optionalItem =
+                orderItemRepo.findByOrderIdAndProductId(
+                        dto.getOrderId(),
+                        dto.getProductId()
+                );
+
+        OrderItem saved;
+
+        if (optionalItem.isPresent()) {
+
+            OrderItem oldItem = optionalItem.get();
+
+            int oldQuantity = oldItem.getQuantity();
+            int newQuantity = dto.getQuantity();
+
+            int difference = newQuantity - oldQuantity;
+
+            if (product.getStock() < difference) {
                 throw new RuntimeException(
                         "Not enough stock for product: " + product.getName()
                 );
             }
+
             oldItem.setQuantity(newQuantity);
+            oldItem.setProduct(product);
+            oldItem.setCart(cart);
             oldItem.setPrice(product.getPrice());
-             save = orderItemRepo.save(oldItem);
+
+            product.setStock(product.getStock() - difference);
+
+            saved = orderItemRepo.save(oldItem);
 
         } else {
 
+            if (product.getStock() < dto.getQuantity()) {
+                throw new RuntimeException(
+                        "Not enough stock for product: " + product.getName()
+                );
+            }
+
+            OrderItem item = new OrderItem();
+
             item.setOrder(order);
             item.setProduct(product);
+            item.setCart(cart);
+            item.setQuantity(dto.getQuantity());
             item.setPrice(product.getPrice());
-             save = orderItemRepo.save(item);
+
+            product.setStock(product.getStock() - dto.getQuantity());
+
+            saved = orderItemRepo.save(item);
         }
 
-
-        product.setStock(product.getStock() - item.getQuantity());
         productRepo.save(product);
 
         updateTotalPrice(order);
-        return orderMapper.orderItemToDto(save);
-    }
 
+        return orderMapper.orderItemToDto(saved);
+    }
     public OrderItemResponseDTO updateOrderItem(Long id, OrderItem order) {
         OrderItem oldOrderItem = orderItemRepo.findById(id).orElseThrow(() -> new RuntimeException("OrderItem not found"));
         Product product = productRepo.findById(order.getProduct().getId()).orElseThrow(() -> new RuntimeException("Product not found"));
         Order order1 = orderRepo.findById(order.getOrder().getId()).orElseThrow(() -> new RuntimeException("Order not found"));
-      int oldQua = oldOrderItem.getQuantity();
-      int newQua = order.getQuantity();
-      int different = newQua - oldQua;
-      if(different < 0) {
-          product.setStock(product.getStock() + Math.abs(different));
-      }
+        int oldQua = oldOrderItem.getQuantity();
+        int newQua = order.getQuantity();
+        int different = newQua - oldQua;
+        if (different < 0) {
+            product.setStock(product.getStock() + Math.abs(different));
+        }
         if (different > 0) {
             product.setStock(product.getStock() - different);
         }
-        if (product.getStock() < order.getQuantity()) {
+        if (product.getStock() < different && different > 0) {
 
             throw new RuntimeException(
                     "Not enough stock for product: " + product.getName()
