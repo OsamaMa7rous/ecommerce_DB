@@ -20,6 +20,7 @@ public class OrderMapper {
         dto.setOrderId(orderItem.getOrder() != null ? orderItem.getOrder().getId() : null);
         dto.setProductId(orderItem.getProduct() != null ? orderItem.getProduct().getId() : null);
         dto.setProductName(orderItem.getProduct() != null ? orderItem.getProduct().getName() : null);
+        dto.setOrderItemId(orderItem.getId());
         dto.setPrice(orderItem.getPrice());
         dto.setQuantity(orderItem.getQuantity());
         return dto;

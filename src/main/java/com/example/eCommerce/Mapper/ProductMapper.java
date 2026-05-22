@@ -34,7 +34,6 @@ public class ProductMapper {
         return newProduct;
     }
 
-    //ssssssssssssss
     public List<ProductResponseDTO> toDtoList(List<Product> products) {
         if (products == null) return null;
 
